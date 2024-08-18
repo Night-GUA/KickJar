@@ -47,7 +47,7 @@ internal class PingTrackerUpdatePatch
 
         StringBuilder sb = new();
         if(Main.ModMode == 0) sb.Append($"<color=#FFC0CB>{Main.ModName}</color><color=#00FFFF> v{Main.PluginVersion}</color>");
-        else if(Main.ModMode == 1) sb.Append($"<color=#6A5ACD>{Main.ModName}</color><color=#00FFFF> v{Main.PluginVersion}</color>");
+        else if(Main.ModMode == 1) sb.Append($"<color=#6A5ACD>{Main.ModName}</color><color=#00FFFF> v{Main.PluginVersion}C{Main.PluginCanary}</color>");
         else sb.Append($"<color={Main.ModColor}>{Main.ModName}</color><color=#00FFFF> v{Main.PluginVersion}</color>");
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
         fps = Mathf.Ceil(1.0f / deltaTime);
@@ -65,7 +65,7 @@ internal class PingTrackerUpdatePatch
         // sb.Append($"\r\n")
         //     .Append(
         //         $"{Utils.Utils.getColoredPingText(ping)} <size=60%>Ping</size></color>  {Utils.Utils.getColoredFPSText(fps)} <size=60%>FPS</size></color>{"  " + (GetPlayer.IsOnlineGame ? ServerName : GetString("Local"))}");
-        sb.Append($"\r\n").Append($"<color=#FFFF00>By</color> <color=#FF0000>Yu</color>");
+        sb.Append($"\r\n").Append($"<color=#FFFF00>By</color> <color=#36FF5D>Yu</color>");
         
         pingTrackerCredential.gameObject.SetActive(__instance.gameObject.active);
         pingTrackerCredential.text = sb.ToString();

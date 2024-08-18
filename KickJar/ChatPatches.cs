@@ -20,21 +20,24 @@ internal class ChatUpdatePatch
     public static void Postfix(ChatController __instance)
     {
         chatStop = __instance.timeSinceLastMessage;
-        // if (send)
-        // {
-        //     Main.Logger.LogInfo("设置tslm");
-        //     __instance.timeSinceLastMessage = 0f;
-        //     send = !send;
-        // }
-        if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count == 0 || (Main.MessagesToSend[0].Item2 == byte.MaxValue && 3.5 > __instance.timeSinceLastMessage)) return;
-
+        if (send)
+        {
+            Main.Logger.LogInfo("设置tslm");
+            __instance.timeSinceLastMessage = 0f;
+            send = !send;
+        }
+        if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count == 0 || Main.MessagesToSend[0].Item2 == byte.MaxValue ||3.5 > __instance.timeSinceLastMessage) return;
+        if (Main.MessagesToSend.Count != 1)
+        {
+            __instance.timeSinceLastMessage = 0f;
+        }
         var player = PlayerControl.LocalPlayer;
         //Logger.Info($"player is null? {player == null}", "ChatUpdatePatch");
         if (player == null) return;
 
         (string msg, byte sendTo, string title) = Main.MessagesToSend[0];
         Main.Logger.LogInfo($"MessagesToSend - sendTo: {sendTo} - title: {title}");
-
+        
         if (sendTo != byte.MaxValue && GetPlayer.IsLobby)
         {
             if (GetPlayer.GetPlayerInfoById(sendTo) != null)
