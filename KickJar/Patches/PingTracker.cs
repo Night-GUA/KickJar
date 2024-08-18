@@ -13,6 +13,7 @@ namespace KickJar;
 internal class PingTrackerUpdatePatch
 {
     private static float deltaTime;
+    public static string ServerName;
     private static TextMeshPro pingTrackerCredential = null;
     private static AspectPosition pingTrackerCredentialAspectPos = null;
     public static float fps;
@@ -59,6 +60,7 @@ internal class PingTrackerUpdatePatch
         __instance.text.text = Utils.getColoredPingText(AmongUsClient.Instance.Ping) +
                                                      "<size=60%>Ping</size></color>";
             __instance.text.text += " " + Utils.getColoredFPSText(fps) + "<size=60%>FPS</size></color>";
+            __instance.text.text +=  "  " + (GetPlayer.IsOnlineGame ? ServerName : "<color=#D3D3D3>Local</color>");
             
         
         // sb.Append($"\r\n")

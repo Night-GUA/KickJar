@@ -33,6 +33,10 @@ class ReportDeadBodyPatch
 {
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
     {
+        if (target == null)
+        {
+            return true;
+        }
         Main.Logger.LogWarning(
             $"玩家【{__instance.GetClientId()}:{__instance.GetRealName()}】违反游戏规则：报告【{target?.PlayerName ?? "null"}】，已驳回");
         return false;

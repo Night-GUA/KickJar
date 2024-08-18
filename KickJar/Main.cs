@@ -15,6 +15,7 @@ using UnityEngine;
 using static CloudGenerator;
 using UnityEngine.Playables;
 using Il2CppSystem.IO;
+using KickJar.Attributes;
 
 [assembly: AssemblyFileVersion(KickJar.Main.PluginVersion)]
 [assembly: AssemblyInformationalVersion(KickJar.Main.PluginVersion)]
@@ -88,7 +89,7 @@ public class Main : BasePlugin
     {
         Instance = this; //Main实例
         Logger = BepInEx.Logging.Logger.CreateLogSource("KickJar"); //输出前缀 设置！
-        
+        PluginModuleInitializerAttribute.InitializeAll();
         BetaBuildURL = Config.Bind("Other", "BetaBuildURL", "");
         SwitchVanilla = Config.Bind("Client Options", "SwitchVanilla", false);
         FirstPlayThisMod = Config.Bind("Patches", "FirstPlayThisMod", true, "改成false启动就不会致命问答了啦...");
