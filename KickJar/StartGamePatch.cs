@@ -14,17 +14,29 @@ class StartPatch
         GetPlayer.numImpostors = 0;
         GetPlayer.numCrewmates = 0;
         Main.Logger.LogInfo("[StartPatch]== 游戏开始 ==");
+        PlayerControl.LocalPlayer.RpcSetName(Main.HostRealName);
         foreach (var pc1 in Main.AllPlayerControls)
         {
             if (pc1.Data.Role.IsImpostor)
             {
                 GetPlayer.numImpostors++;
+                pc1.RpcSetName("<#FF3636>" + pc1.GetRealName());
             }
             else
             {
                 GetPlayer.numCrewmates++;
             }
         }
+    }
+}
+[HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.BeginGame))]
+public class BeginGamePatch
+{
+    public static bool Prefix(GameStartManager __instance)
+    {
+        if (!AmongUsClient.Instance.AmHost) return true;
+        Utils.SendMessage(Main.GameRules);
+        return true;
     }
 }
 [HarmonyPatch(typeof(IntroCutscene))]

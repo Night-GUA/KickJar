@@ -35,12 +35,31 @@ public class Utils
         if (ChatUpdatePatch.chatStop >= 3.5)
         {
             //ChatUpdatePatch.send = true;
+            ChatUpdatePatch.send = true;
             _ = new LateTask(() =>
             {
                 PlayerControl.LocalPlayer.RpcSetName("<#0000ff>【系统消息】");
                 PlayerControl.LocalPlayer.RpcSendChat(s);
                 
                 ChatUpdatePatch.send = true;
+            }, 1.0f, "SendMessage");
+        }
+        else
+        {
+            //ChatUpdatePatch.send = true;
+            _ = new LateTask(() =>
+            {
+                if (ChatUpdatePatch.chatStop >= 3.1)
+                {
+                    PlayerControl.LocalPlayer.RpcSetName("<#0000ff>【系统消息】");
+                    PlayerControl.LocalPlayer.RpcSendChat(s);
+                    ChatUpdatePatch.send = true;
+                }
+                else
+                {
+                    SendMessage(s);
+                }
+                
             }, 3.1f, "SendMessage");
         }
     }

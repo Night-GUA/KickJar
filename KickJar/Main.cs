@@ -58,7 +58,13 @@ public class Main : BasePlugin
     public static BepInEx.Logging.ManualLogSource Logger;
 
     public static string GameRules =
-        "罐子游戏规则：\n狼刀人冷却10秒,不得离开大厅只可在大厅内部刀人狼人能破坏反应堆、灭灯、和关闭食堂大门,狼要阻止船员拍桌直到所有好人被杀死,一开始先等好人出去才可以关门\n注意：狼会自动变成红名\n输入/r重新唤出本消息";
+        "罐子游戏规则：\n狼刀人冷却10秒,不得离开大厅只可在大厅内部刀人狼人能破坏反应堆、灭灯、和关闭食堂大门,狼要阻止船员拍桌直到所有好人被杀死,一开始先等好人出去才可以关门\n注意：狼会自动变成红名\n输入 /h 查看指令菜单";
+
+    public static string GameHelp =
+        "/r → 规则\n" +
+        "/h → 再次唤出此菜单\n" +
+        "/qt → 拉黑此房间（此操作无法撤销！）\n";
+    
     public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
     
     public static Main Instance; //设置Main实例
