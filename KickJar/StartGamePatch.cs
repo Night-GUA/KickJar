@@ -54,10 +54,11 @@ class IntroCutscenePatch
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
 class CreatePlayerPatch
 {
-    public static void Postfix()
+    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        Utils.SendMessage(Main.GameRules);
+        _ = new LateTask(() => { Utils.SendMessage(Main.GameRules,client.Character.PlayerId); }, 3f, "SendWelcomeMessage");
+        
         //Utils.SendMessage($"罐子游戏规则：\n狼刀人冷却10秒,不得离开大厅只可在大厅内部刀人狼人能破坏反应堆、灭灯、和关闭食堂大门,狼要阻止船员拍桌直到所有好人被杀死,一开始先等好人出去才可以关门\n注意：狼会自动变成红名");
     }
 }

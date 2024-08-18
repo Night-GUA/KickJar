@@ -41,6 +41,8 @@ public class Main : BasePlugin
         
     public static string HostRealName = "";
     
+    public static readonly List<(string, byte, string)> MessagesToSend = [];
+    
     public static int ModMode { get; private set; } =
 #if DEBUG
 0;

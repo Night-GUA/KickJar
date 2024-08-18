@@ -1,7 +1,7 @@
 using UnityEngine;
 using InnerNet;
 using System.Linq;
-using Il2CppSystem.Collections.Generic;
+// using Il2CppSystem.Collections.Generic;
 using System.IO;
 using Hazel;
 using System.Reflection;
@@ -11,13 +11,14 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace KickJar;
 
-public class Utils
+public static class Utils
 {
     public static void reportBody(NetworkedPlayerInfo pc)
     {
@@ -63,6 +64,59 @@ public class Utils
             }, 3.1f, "SendMessage");
         }
     }
+    public static void SendMessage(string text, byte sendTo = byte.MaxValue, string title = "", bool logforChatManager = false, bool noReplay = false, bool ShouldSplit = false)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        try
+        {
+            if (ShouldSplit && text.Length > 1200)
+            {
+                text.SplitMessage().Do(x => SendMessage(x, sendTo, title));
+                return;
+            }
+            //else if (text.Length > 1200 && (!GetPlayerById(sendTo).IsModClient()))
+            //{
+            //    text = text.RemoveHtmlTagsIfNeccessary();
+            //}
+        }
+        catch (Exception exx)
+        {
+            Main.Logger.LogWarning($"Error after try split the msg {text} at: {exx}");
+        }
+
+        // set noReplay to false when you want to send previous sys msg or do not want to add a sys msg in the history
+        if (!noReplay && GetPlayer.IsInGame) ChatManager.AddSystemChatHistory(sendTo, text);
+
+        if (title == "") title = "<color=#aaaaff>" + "<#0000ff>【系统消息】" + "</color>";
+
+        Main.MessagesToSend.Add((text.RemoveHtmlTagsTemplate(), sendTo, title));
+    }
+    public static string[] SplitMessage(this string LongMsg)
+    {
+        List<string> result = [];
+        var lines = LongMsg.Split('\n');
+        var shortenedtext = string.Empty;
+
+        foreach (var line in lines)
+        {
+
+            if (shortenedtext.Length + line.Length < 1200)
+            {
+                shortenedtext += line + "\n";
+                continue;
+            }
+
+            if (shortenedtext.Length >= 1200) result.AddRange(shortenedtext.Chunk(1200).Select(x => new string(x)));
+            else result.Add(shortenedtext);
+            shortenedtext = line + "\n";
+
+        }
+
+        if (shortenedtext.Length > 0) result.Add(shortenedtext);
+
+        return [.. result];
+    }
+    public static string RemoveHtmlTagsTemplate(this string str) => Regex.Replace(str, "", "");
     public static string getColoredPingText(int ping){
 
         if (ping <= 100){ // Green for ping < 100

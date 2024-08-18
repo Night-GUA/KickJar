@@ -33,6 +33,8 @@ public class PlayerState
 }
 static class GetPlayer
 {
+    public static NetworkedPlayerInfo GetPlayerInfoById(int PlayerId) =>
+        GameData.Instance.AllPlayers.ToArray().FirstOrDefault(info => info.PlayerId == PlayerId);
     public static bool IsCanMove => (bool)PlayerControl.LocalPlayer?.CanMove;
     //public static bool IsNotJoined => AmongUsClient.Instance.GameState == AmongUsClient.GameStates.NotJoined;
     public static bool IsVanillaServer
