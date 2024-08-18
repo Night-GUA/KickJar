@@ -68,8 +68,8 @@ internal class ChatUpdatePatch
             DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg, false);
             player.SetName(name);
         }
-
-
+        
+        
         var writer = CustomRpcSender.Create("MessagesToSend", SendOption.None);
         writer.StartMessage(clientId);
         writer.StartRpc(player.NetId, (byte)RpcCalls.SetName)
@@ -126,11 +126,18 @@ public static class ChatBubblePatch
 [HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
 internal class ChatCommands
 {
+    public static bool isSending;
     public static bool Prefix(ChatController __instance)
     {
         //if()
+        isSending = true;
         PlayerControl.LocalPlayer.RpcSetName(Main.HostRealName);
         return true;
+    }
+
+    public static void Postfix()
+    {
+        isSending = false;
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSendChat))]

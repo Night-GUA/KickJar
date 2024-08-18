@@ -62,3 +62,12 @@ class CreatePlayerPatch
         //Utils.SendMessage($"罐子游戏规则：\n狼刀人冷却10秒,不得离开大厅只可在大厅内部刀人狼人能破坏反应堆、灭灯、和关闭食堂大门,狼要阻止船员拍桌直到所有好人被杀死,一开始先等好人出去才可以关门\n注意：狼会自动变成红名");
     }
 }
+
+[HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.DisconnectInternal))]
+class DisconnectInternalPatch
+{
+    public static void Prefix(InnerNetClient __instance, DisconnectReasons reason, string stringReason)
+    {
+        Logger.Info($"断开连接(理由:{reason}:{stringReason}，Ping:{__instance.Ping})", "Session");
+    }
+}

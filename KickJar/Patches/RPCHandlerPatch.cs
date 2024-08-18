@@ -19,7 +19,8 @@ internal class RPCHandlerPatch
                 if (p1 == null) 
                     return true;
                 Main.Logger.LogWarning(
-                    $"玩家【{pc.GetClientId()}:{pc.GetRealName()}】违反游戏规则：报告【{p1?.GetRealName() ?? "null"}】，已驳回");
+                    $"玩家【{pc.GetClientId()}:{pc.GetRealName()}】违反游戏规则：报告【{p1.GetRealName()}】，已驳回");
+                Logger.Info($"{p1}","ReceiveRPC");
                 return false;
             break;
         }

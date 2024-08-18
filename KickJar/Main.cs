@@ -35,13 +35,10 @@ public class Main : BasePlugin
     };
     public static readonly string MainMenuText = ""; // 咱们模组的首页标语
     public const string PluginGuid = "com.Yu.KickJar"; //咱们模组的Guid
-    public const string PluginVersion = "1.0.0"; //咱们模组的版本号
-    public const string PluginCanary = "6";
+    public const string PluginVersion = "1.0.2"; //咱们模组的版本号
+    public const string PluginCanary = "1";
     public const string CanUseInAmongUsVer = "2024.8.13"; //智齿的AU版本
     public const int PluginCreation = 1;
-    
-    
-    
     
     public static NormalGameOptionsV08 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
     public static HideNSeekGameOptionsV08 HideNSeekOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
@@ -69,7 +66,7 @@ public class Main : BasePlugin
     public Harmony Harmony { get; } = new Harmony(PluginGuid);
 
     public static BepInEx.Logging.ManualLogSource Logger;
-
+    public static ConfigEntry<bool> SwitchVanilla { get; private set; }
     public static string SystemMessageName =
         "【系统消息】";
     public static string GameRules =
@@ -93,7 +90,7 @@ public class Main : BasePlugin
         Logger = BepInEx.Logging.Logger.CreateLogSource("KickJar"); //输出前缀 设置！
         
         BetaBuildURL = Config.Bind("Other", "BetaBuildURL", "");
-        
+        SwitchVanilla = Config.Bind("Client Options", "SwitchVanilla", false);
         FirstPlayThisMod = Config.Bind("Patches", "FirstPlayThisMod", true, "改成false启动就不会致命问答了啦...");
 
         if (Application.version == CanUseInAmongUsVer)
@@ -109,6 +106,7 @@ public class Main : BasePlugin
             Gradient = new(new Color32(18, 194, 233, 255), new Color32(196, 113, 237, 255),
                 new Color32(246, 79, 89, 255)),
         };
+        
         if (syc != null)
         {
             syc.Text = SystemMessageName;

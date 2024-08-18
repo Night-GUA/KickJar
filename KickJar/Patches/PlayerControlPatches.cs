@@ -52,6 +52,7 @@ class CheckTaskCompletionPatch
 {
     public static bool Prefix(ref bool __result)
     {
+        if (!AmongUsClient.Instance.AmHost) return true;
         __result = false;
         return false;
     }
@@ -75,16 +76,33 @@ class FixedUpdatePatch
                     Main.HostRealName = PlayerControl.LocalPlayer.GetRealName();
                 }
 
+                var debug = Main.ModMode == 0 ? "Debug" : "";
+
                 if (Main.HostRealName != "" && PlayerControl.LocalPlayer.GetRealName() != "<#0000ff>【罐子游戏】\n<#FFFFFF>" +
-                    Main.HostRealName + $"\n{Main.ModShowName} <color=#00FFFF> v{Main.PluginVersion}")
+                    Main.HostRealName + $"\n{Main.ModShowName} <color=#00FFFF> v{Main.PluginVersion}" + debug && !ChatCommands.isSending)
                 {
                     __instance.RpcSetName("<#0000ff>【罐子游戏】\n<#FFFFFF>" + Main.HostRealName +
-                                          $"\n{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}");
+                                          $"\n{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}" + debug);
                 }
             }
         }
                 
         __instance.cosmetics.nameText.text = __instance.GetRealName() + "\n";
         __instance.cosmetics.nameText.alignment = TextAlignmentOptions.CenterGeoAligned;
+    }
+}
+
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MurderPlayer))]
+class MurderPlayerInHidenSeekPatch
+{
+    public static void Prefix(PlayerControl __instance,
+        [HarmonyArgument(0)] PlayerControl target /*, [HarmonyArgument(1)] MurderResultFlags resultFlags*/)
+    {
+        if (GetPlayer.IsLobby)
+        {
+            SendInGamePatch.SendInGame($"恭喜您，您的房间被 {__instance.GetRealName()} 炸辣！\n我们已经尝试拦截，如果没有效果请重开房间");
+            if(AmongUsClient.Instance.AmHost) AmongUsClient.Instance.KickPlayer(__instance.GetClientId(),true);
+            Logger.Fatal($"房间被炸ERROR，{__instance.GetRealName()}/{__instance.GetClient().ProductUserId}/{__instance.GetClient().FriendCode}","MurderCheck");
+        }
     }
 }
