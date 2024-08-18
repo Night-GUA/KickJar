@@ -13,10 +13,10 @@ public static class UpdateFriendCodeUIPatch
 
         string credentialsText = "<color=#FFB6C1>YuTeam \u00a9 2024</color>";
         credentialsText += "\t\t\t";
-        string versionText = $"<color={Main.ModColor}>{Main.ModName}</color> - <color=#ffff00>v{Main.PluginVersion}</color>";
+        string versionText = $"{Main.ModShowName} - <color=#ffff00>v{Main.PluginVersion}</color>";
 
 #if CANARY
-        versionText = $"<color=#cdfffd>{Main.ModName}</color> - {ThisAssembly.Git.Commit}";
+        versionText = $"{Main.ModShowName} - {ThisAssembly.Git.Commit}";
 #endif
 
 #if DEBUG

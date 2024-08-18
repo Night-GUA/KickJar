@@ -20,6 +20,39 @@ namespace KickJar;
 
 public static class Utils
 {
+    public static Dictionary<string, Sprite> CachedSprites = new();
+    public static Sprite LoadSprite(string path, float pixelsPerUnit = 1f)
+    {
+        try
+        {
+            if (CachedSprites.TryGetValue(path + pixelsPerUnit, out var sprite)) return sprite;
+            Texture2D texture = LoadTextureFromResources(path);
+            sprite = Sprite.Create(texture, new(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+            sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
+            return CachedSprites[path + pixelsPerUnit] = sprite;
+        }
+        catch
+        {
+            
+        }
+        return null;
+    }
+    public static Texture2D LoadTextureFromResources(string path)
+    {
+        try
+        {
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+            var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            using MemoryStream ms = new();
+            stream.CopyTo(ms);
+            ImageConversion.LoadImage(texture, ms.ToArray(), false);
+            return texture;
+        }
+        catch
+        {
+        }
+        return null;
+    }
     public static void reportBody(NetworkedPlayerInfo pc)
     {
         var HostData = AmongUsClient.Instance.GetHost();
@@ -39,7 +72,7 @@ public static class Utils
             ChatUpdatePatch.send = true;
             _ = new LateTask(() =>
             {
-                PlayerControl.LocalPlayer.RpcSetName("<#0000ff>【系统消息】");
+                PlayerControl.LocalPlayer.RpcSetName(Main.SystemMessageName);
                 PlayerControl.LocalPlayer.RpcSendChat(s);
                 
                 ChatUpdatePatch.send = true;
@@ -52,7 +85,7 @@ public static class Utils
             {
                 if (ChatUpdatePatch.chatStop >= 3.1)
                 {
-                    PlayerControl.LocalPlayer.RpcSetName("<#0000ff>【系统消息】");
+                    PlayerControl.LocalPlayer.RpcSetName(Main.SystemMessageName);
                     PlayerControl.LocalPlayer.RpcSendChat(s);
                     ChatUpdatePatch.send = true;
                 }
@@ -87,7 +120,7 @@ public static class Utils
         // set noReplay to false when you want to send previous sys msg or do not want to add a sys msg in the history
         if (!noReplay && GetPlayer.IsInGame) ChatManager.AddSystemChatHistory(sendTo, text);
 
-        if (title == "") title = "<color=#aaaaff>" + "<#0000ff>【系统消息】" + "</color>";
+        if (title == "") title = Main.SystemMessageName;
 
         Main.MessagesToSend.Add((text.RemoveHtmlTagsTemplate(), sendTo, title));
     }

@@ -35,7 +35,7 @@ public class BeginGamePatch
     public static bool Prefix(GameStartManager __instance)
     {
         if (!AmongUsClient.Instance.AmHost) return true;
-        Utils.SendMessage(Main.GameRules);
+        //Utils.SendMessage(Main.GameRules);
         return true;
     }
 }

@@ -27,13 +27,21 @@ public class Main : BasePlugin
 {
 
     public static readonly string ModName = "KickJar"; // 咱们的模组名字
-    public static readonly string ModColor = "#36B9FF"; // 咱们的模组颜色
+    public static string ModShowName = ModName; // 咱们的模组名字
+    public static ColorGradient.Component ModColor = new ColorGradient.Component()
+    {
+        Gradient = new(new Color32(54, 185, 255, 255), new Color32(54, 108, 255, 255),
+            new Color32(104, 54, 255, 255)),
+    };
     public static readonly string MainMenuText = ""; // 咱们模组的首页标语
     public const string PluginGuid = "com.Yu.KickJar"; //咱们模组的Guid
     public const string PluginVersion = "1.0.0"; //咱们模组的版本号
-    public const string PluginCanary = "3";
+    public const string PluginCanary = "6";
     public const string CanUseInAmongUsVer = "2024.8.13"; //智齿的AU版本
     public const int PluginCreation = 1;
+    
+    
+    
     
     public static NormalGameOptionsV08 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
     public static HideNSeekGameOptionsV08 HideNSeekOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
@@ -52,7 +60,9 @@ public class Main : BasePlugin
     #else
     2;
 #endif
-    
+
+    public static ConfigEntry<bool> FirstPlayThisMod;
+
 
     public static List<PlayerControl> JoinedPlayer = new();
     
@@ -60,8 +70,10 @@ public class Main : BasePlugin
 
     public static BepInEx.Logging.ManualLogSource Logger;
 
+    public static string SystemMessageName =
+        "【系统消息】";
     public static string GameRules =
-        "罐子游戏规则：\n狼刀人冷却10秒,不得离开大厅只可在大厅内部刀人狼人能破坏反应堆、灭灯、和关闭食堂大门,狼要阻止船员拍桌直到所有好人被杀死,一开始先等好人出去才可以关门\n注意：狼会自动变成红名\n输入 /h 查看指令菜单";
+        "罐子游戏规则：\n狼刀人冷却10秒,不得离开大厅只可在大厅内部刀人狼人能破坏反应堆、灭灯、和关闭食堂大门,狼要阻止船员拍桌直到达成击杀获胜,一开始先等好人出去才可以关门\n狼会自动变成红名\n输入/h查看指令菜单";
 
     public static string GameHelp =
         "/r → 规则\n" +
@@ -82,6 +94,8 @@ public class Main : BasePlugin
         
         BetaBuildURL = Config.Bind("Other", "BetaBuildURL", "");
         
+        FirstPlayThisMod = Config.Bind("Patches", "FirstPlayThisMod", true, "改成false启动就不会致命问答了啦...");
+
         if (Application.version == CanUseInAmongUsVer)
             Logger.LogInfo($"AmongUs Version: {Application.version}"); //牢底居然有智齿的版本？！
         else
@@ -90,6 +104,21 @@ public class Main : BasePlugin
         Harmony.PatchAll();
         if (ModMode != 0) ConsoleManager.DetachConsole();
         else ConsoleManager.CreateConsole();
+        var syc = new ColorGradient.Component()
+        {
+            Gradient = new(new Color32(18, 194, 233, 255), new Color32(196, 113, 237, 255),
+                new Color32(246, 79, 89, 255)),
+        };
+        if (syc != null)
+        {
+            syc.Text = SystemMessageName;
+            SystemMessageName = syc.Generate(false);
+        }
+        if (ModColor != null)
+        {
+            ModColor.Text = ModShowName;
+            ModShowName = ModColor.Generate(false);
+        }
         //模组加载好了标语
         Logger.LogInfo("========= KJ loaded! =========");
     }

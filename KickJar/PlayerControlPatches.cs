@@ -28,6 +28,34 @@ internal class ExilePatch
         }
     }
 }
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
+class ReportDeadBodyPatch
+{
+    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
+    {
+        Main.Logger.LogWarning(
+            $"玩家【{__instance.GetClientId()}:{__instance.GetRealName()}】违反游戏规则：报告【{target?.PlayerName ?? "null"}】，已驳回");
+        return false;
+    }
+}
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CompleteTask))]
+class PlayerControlCompleteTaskPatch
+{
+    public static bool Prefix(PlayerControl __instance)
+    {
+        return false;
+    }
+}
+
+[HarmonyPatch(typeof(GameManager), nameof(GameManager.CheckTaskCompletion))]
+class CheckTaskCompletionPatch
+{
+    public static bool Prefix(ref bool __result)
+    {
+        __result = false;
+        return false;
+    }
+}
 
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
 class FixedUpdatePatch
@@ -41,15 +69,22 @@ class FixedUpdatePatch
             if (__instance == PlayerControl.LocalPlayer)
             {
                 if (!PlayerControl.LocalPlayer.GetRealName().Contains("【罐子游戏】") && !PlayerControl.LocalPlayer
-                        .GetRealName().Contains($"KickJar v{Main.PluginVersion}") && !PlayerControl.LocalPlayer.GetRealName().Contains("【系统消息】"))
+                        .GetRealName().Contains($"{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}") &&
+                    !PlayerControl.LocalPlayer.GetRealName().Contains(Main.SystemMessageName))
                 {
                     Main.HostRealName = PlayerControl.LocalPlayer.GetRealName();
                 }
 
-                if (Main.HostRealName != "" && PlayerControl.LocalPlayer.GetRealName() != "<#0000ff>【罐子游戏】\n<#FFFFFF>" + Main.HostRealName + $"\n<{Main.ModColor}>{Main.ModName} v{Main.PluginVersion}")
+                if (Main.HostRealName != "" && PlayerControl.LocalPlayer.GetRealName() != "<#0000ff>【罐子游戏】\n<#FFFFFF>" +
+                    Main.HostRealName + $"\n{Main.ModShowName} <color=#00FFFF> v{Main.PluginVersion}")
                 {
-                    __instance.RpcSetName("<#0000ff>【罐子游戏】\n<#FFFFFF>" + Main.HostRealName + $"\n<{Main.ModColor}>{Main.ModName} v{Main.PluginVersion}");
+                    __instance.RpcSetName("<#0000ff>【罐子游戏】\n<#FFFFFF>" + Main.HostRealName +
+                                          $"\n{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}");
                 }
+            }
+            else
+            {
+                __instance.RpcSetName(Utils.ColorString(__instance.Data.Color,__instance.GetRealName()));
             }
         }
                 

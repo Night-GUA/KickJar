@@ -45,10 +45,9 @@ internal class PingTrackerUpdatePatch
         // __instance.transform.localPosition = new Vector3(__instance.transform.localPosition.x,
         //     __instance.transform.localPosition.y + 10, __instance.transform.localPosition.z);
 
-        StringBuilder sb = new();
-        if(Main.ModMode == 0) sb.Append($"<color=#FFC0CB>{Main.ModName}</color><color=#00FFFF> v{Main.PluginVersion}</color>");
-        else if(Main.ModMode == 1) sb.Append($"<color=#6A5ACD>{Main.ModName}</color><color=#00FFFF> v{Main.PluginVersion}C{Main.PluginCanary}</color>");
-        else sb.Append($"<color={Main.ModColor}>{Main.ModName}</color><color=#00FFFF> v{Main.PluginVersion}</color>");
+        StringBuilder sb = new(); 
+        if(Main.ModMode == 1) sb.Append($"{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}C{Main.PluginCanary}</color>");
+        else sb.Append($"{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}</color>");
         deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
         fps = Mathf.Ceil(1.0f / deltaTime);
         var ping = AmongUsClient.Instance.Ping;
