@@ -82,10 +82,6 @@ class FixedUpdatePatch
                                           $"\n{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}");
                 }
             }
-            else
-            {
-                __instance.RpcSetName(Utils.ColorString(__instance.Data.Color,__instance.GetRealName()));
-            }
         }
                 
         __instance.cosmetics.nameText.text = __instance.GetRealName() + "\n";

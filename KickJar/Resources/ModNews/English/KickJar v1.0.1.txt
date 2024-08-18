@@ -1,0 +1,12 @@
+#Number:100003
+#Title:KickJar v1.0.1
+#SubTitle:★★★★Start!★★★★
+#ShortTitle:★KickJar v1.0.1
+#Date:2024-08-18T00:00:00Z
+#-----------------------------
+Thank you for your like !!!
+
+## Corresponding to Among Us Version
+- Based on AmongUs v2024.8.13
+
+## Sorry, KickJar doesn't support other languages at this time
