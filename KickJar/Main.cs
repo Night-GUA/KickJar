@@ -36,7 +36,7 @@ public class Main : BasePlugin
     };
     public static readonly string MainMenuText = ""; // 咱们模组的首页标语
     public const string PluginGuid = "com.Yu.KickJar"; //咱们模组的Guid
-    public const string PluginVersion = "1.0.2"; //咱们模组的版本号
+    public const string PluginVersion = "1.0.3"; //咱们模组的版本号
     public const string PluginCanary = "1";
     public const string CanUseInAmongUsVer = "2024.8.13"; //智齿的AU版本
     public const int PluginCreation = 1;
@@ -67,12 +67,17 @@ public class Main : BasePlugin
     public Harmony Harmony { get; } = new Harmony(PluginGuid);
 
     public static BepInEx.Logging.ManualLogSource Logger;
-    public static ConfigEntry<bool> SwitchVanilla { get; private set; }
+    public static ConfigEntry<bool> SwitchVanilla;
     public static string SystemMessageName =
         "【系统消息】";
     public static string GameRules =
         "罐子游戏规则：\n狼刀人冷却10秒,不得离开大厅只可在大厅内部刀人狼人能破坏反应堆、灭灯、和关闭食堂大门,狼要阻止船员拍桌直到达成击杀获胜,一开始先等好人出去才可以关门\n狼会自动变成红名\n输入/h查看指令菜单";
+    static string debug = Main.ModMode == 0 ? "Debug" : "";
+    public static string HostName => 
+        "<#0000ff>罐子游戏\u2665<#FFFFFF>" + Main.HostRealName +
+                                     $"\n{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}" + debug;
 
+    public static bool isModProtocol = false;
     public static string GameHelp =
         "/r → 规则\n" +
         "/h → 再次唤出此菜单\n" +

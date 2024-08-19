@@ -90,6 +90,16 @@ internal class ChatUpdatePatch
     }
 }
 
+
+[HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
+internal class ChatCommands
+{
+    public static bool Prefix(ChatController __instance)
+    {
+        PlayerControl.LocalPlayer.RpcSetName(Main.HostRealName);
+        return true;
+    }
+}
 [HarmonyPatch(typeof(ChatBubble))]
 public static class ChatBubblePatch
 {
@@ -102,7 +112,14 @@ public static class ChatBubblePatch
         //     ChatUpdatePatch.send = true;
         // }
         if (!AmongUsClient.Instance.AmHost) return;
-        switch (chatText)
+        var playerData = __instance.playerInfo;
+        if (chatText.StartsWith("\n")) chatText = chatText[1..];
+        //if (!text.StartsWith("/")) return;
+        string[] args = chatText.Split(' ');
+        string subArgs = "";
+        string subArgs2 = "";
+        
+        switch (args[0])
         {
             case "/r":
             case "/rule":
@@ -116,28 +133,22 @@ public static class ChatBubblePatch
             case "/quit":
             case "/qt":
             case "/sair":
-                Utils.SendMessage($"很抱歉让您对该房间厌恶，我们已将{__instance.playerInfo.PlayerName}踢出！（我们真的在努力了）",__instance.playerInfo.PlayerId);
-                AmongUsClient.Instance.KickPlayer(__instance.playerInfo.ClientId,true);
+                subArgs = args.Length < 2 ? "" : args[1];
+                var cid = playerData.PlayerId.ToString();
+                cid = cid.Length != 1 ? cid.Substring(1, 1) : cid;
+                if (subArgs.Equals(cid))
+                {
+                    string name = playerData.PlayerName;
+                    Utils.SendMessage($"很抱歉让您对该房间厌恶，我们已将{name}踢出！（我们真的在努力了）");
+                    AmongUsClient.Instance.KickPlayer(playerData.ClientId, true);
+                }
+                else
+                {
+                    Utils.SendMessage(string.Format("我们将踢出你并封禁你以防止你再次遇到这个糟糕的房间，此操作不可逆转，如果你真的希望如此请发送 /qt {0}", cid), playerData.PlayerId);
+                }
                 break;
+                
         }
-    }
-}
-
-[HarmonyPatch(typeof(ChatController), nameof(ChatController.SendChat))]
-internal class ChatCommands
-{
-    public static bool isSending;
-    public static bool Prefix(ChatController __instance)
-    {
-        //if()
-        isSending = true;
-        PlayerControl.LocalPlayer.RpcSetName(Main.HostRealName);
-        return true;
-    }
-
-    public static void Postfix()
-    {
-        isSending = false;
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSendChat))]
@@ -145,6 +156,7 @@ class RpcSendChatPatch
 {
     public static bool Prefix(PlayerControl __instance, string chatText, ref bool __result)
     {
+        // PlayerControl.LocalPlayer.RpcSetName(Main.HostRealName);
         if (__instance == PlayerControl.LocalPlayer)
         {
             ChatUpdatePatch.send = true;

@@ -1,5 +1,6 @@
 using HarmonyLib;
 using TMPro;
+using UnityEngine;
 
 namespace KickJar;
 
@@ -73,25 +74,31 @@ class FixedUpdatePatch
         {
             if (__instance == PlayerControl.LocalPlayer)
             {
-                if (!PlayerControl.LocalPlayer.GetRealName().Contains("【罐子游戏】") && !PlayerControl.LocalPlayer
-                        .GetRealName().Contains($"{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}") &&
+                if (!PlayerControl.LocalPlayer.GetRealName().Contains(Main.HostName) &&
                     !PlayerControl.LocalPlayer.GetRealName().Contains(Main.SystemMessageName))
                 {
                     Main.HostRealName = PlayerControl.LocalPlayer.GetRealName();
                 }
+                //var syc = new ColorGradient.Component()
+                // {
+                //     Gradient = new(new Color32(220, 255, 54, 255), new Color32(63, 255, 54, 255),
+                //         new Color32(54, 255, 185, 255)),
+                // };
+                //
+                // if (syc != null)
+                // {
+                //     syc.Text = Main.HostRealName;
+                //     Main.HostRealName = syc.Generate(false);
+                // }
 
-                var debug = Main.ModMode == 0 ? "Debug" : "";
-
-                if (Main.HostRealName != "" && PlayerControl.LocalPlayer.GetRealName() != "<#0000ff>【罐子游戏】\n<#FFFFFF>" +
-                    Main.HostRealName + $"\n{Main.ModShowName} <color=#00FFFF> v{Main.PluginVersion}" + debug && !ChatCommands.isSending)
+                if (Main.HostRealName != "" && PlayerControl.LocalPlayer.GetRealName() != Main.HostName)
                 {
-                    __instance.RpcSetName("<#0000ff>【罐子游戏】\n<#FFFFFF>" + Main.HostRealName +
-                                          $"\n{Main.ModShowName}<color=#00FFFF> v{Main.PluginVersion}" + debug);
+                    __instance.RpcSetName(Main.HostName);
                 }
             }
         }
                 
-        __instance.cosmetics.nameText.text = __instance.GetRealName() + "\n";
+        // __instance.cosmetics.nameText.text = __instance.GetRealName() + "\n";
         __instance.cosmetics.nameText.alignment = TextAlignmentOptions.CenterGeoAligned;
     }
 }
